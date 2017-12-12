@@ -2,14 +2,17 @@ package moe.yamato.autojcode.generator;
 
 import com.google.common.collect.Maps;
 import com.google.common.collect.Sets;
-import freemarker.template.Template;
 import freemarker.template.TemplateException;
 import moe.yamato.autojcode.domain.Property;
 import moe.yamato.autojcode.utils.FreemarkerUtil;
 import moe.yamato.autojcode.utils.SqlUtils;
 
+import java.io.BufferedWriter;
 import java.io.IOException;
-import java.io.StringWriter;
+import java.nio.charset.Charset;
+import java.nio.file.Files;
+import java.nio.file.Paths;
+import java.nio.file.StandardOpenOption;
 import java.util.Map;
 import java.util.Set;
 import java.util.stream.Collectors;
@@ -21,30 +24,32 @@ import java.util.stream.Collectors;
  */
 public class MapperGenerator {
 
-
     public static final Set<String> COLUMNS_NEEDNT_INSERT = Sets.newHashSet("id", "ctime", "mtime");
     public static final Set<String> COLUMNS_NEEDNT_UPDATE = Sets.newHashSet("id", "cuser", "ctime", "mtime");
 
     public static void generateMapper(
-            String tableName,
-            String mapperPackage,
-            Set<String> columns
+            String namespace, String packageName, String className, String tableName,
+            Set<String> columns, String primaryKey
     ) throws IOException, TemplateException {
 
         Map<String, Object> dataModel = Maps.newHashMap();
-        dataModel.put("resultType", "");
-        dataModel.put("mapperNameSpace", mapperPackage + ".");
+        dataModel.put("resultType", packageName + "." + className);
+        dataModel.put("namespace", namespace);
         dataModel.put("tableName", tableName);
         dataModel.put("columns", columns);
+        dataModel.put("pk", primaryKey);
         dataModel.put("insertColumns", Sets.difference(columns, COLUMNS_NEEDNT_INSERT));
         dataModel.put("updateColumns", Sets.difference(columns, COLUMNS_NEEDNT_UPDATE));
 
-        final Template template = FreemarkerUtil.getTemplate("mapper.xml.ftl");
-
-        final StringWriter stringWriter = new StringWriter(1000);
-        template.process(dataModel, stringWriter);
-
-        System.out.println(stringWriter.toString());
+        try (final BufferedWriter bufferedWriter = Files.newBufferedWriter(
+                Paths.get(".", className + "Mapper.xml"),
+                Charset.forName("utf-8"),
+                StandardOpenOption.CREATE,
+                StandardOpenOption.WRITE,
+                StandardOpenOption.TRUNCATE_EXISTING)
+        ) {
+            FreemarkerUtil.getTemplate("mapper.xml.ftl").process(dataModel, bufferedWriter);
+        }
     }
 
     public static void main(String[] args) throws IOException, TemplateException {
@@ -64,6 +69,7 @@ public class MapperGenerator {
 
         final Set<Property> columns = SqlUtils.getProperties(sql);
 
-        generateMapper(SqlUtils.getTableDescriber(sql).getTableName(), "", Sets.newLinkedHashSet(columns.stream().map(Property::getName).collect(Collectors.toList())));
+        generateMapper("", "com.yamato.domain", "CandidateRecruit", SqlUtils.getTableDescriber(sql).getTableName(),
+                Sets.newLinkedHashSet(columns.stream().map(Property::getName).collect(Collectors.toList())), "catId");
     }
 }

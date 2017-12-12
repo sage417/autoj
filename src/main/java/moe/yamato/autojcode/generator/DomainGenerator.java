@@ -3,7 +3,6 @@ package moe.yamato.autojcode.generator;
 import com.google.common.base.CaseFormat;
 import com.google.common.base.Strings;
 import com.google.common.collect.Maps;
-import com.google.common.collect.Sets;
 import freemarker.template.TemplateException;
 import moe.yamato.autojcode.domain.Property;
 import moe.yamato.autojcode.domain.TableDescriber;
@@ -66,7 +65,7 @@ public class DomainGenerator {
                 "  `ctime` datetime NOT NULL DEFAULT CURRENT_TIMESTAMP COMMENT '创建时间',\n" +
                 "  `mtime` datetime NOT NULL DEFAULT CURRENT_TIMESTAMP ON UPDATE CURRENT_TIMESTAMP COMMENT '更新时间',\n" +
                 "  PRIMARY KEY (`candidateId`)\n" +
-                ") ENGINE=InnoDB DEFAULT CHARSET=utf8mb4 ;";
+                ") ENGINE=InnoDB DEFAULT CHARSET=utf8mb4 COMMENT='应聘详情信息';";
 
         generateDomain(sql, "t_", "", ".");
 

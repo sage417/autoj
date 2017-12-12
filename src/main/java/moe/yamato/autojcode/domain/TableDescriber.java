@@ -1,5 +1,9 @@
 package moe.yamato.autojcode.domain;
 
+import com.google.common.collect.ImmutableList;
+
+import java.util.List;
+
 /**
  * Package: moe.yamato.autojcode
  *
@@ -12,9 +16,12 @@ public class TableDescriber {
 
     private final String comment;
 
-    public TableDescriber(String tableName, String comment) {
+    private final ImmutableList<String> primaryKeys;
+
+    public TableDescriber(String tableName, String comment, List<String> primaryKeys) {
         this.tableName = tableName;
         this.comment = comment;
+        this.primaryKeys = ImmutableList.copyOf(primaryKeys);
     }
 
     public String getTableName() {
@@ -25,4 +32,7 @@ public class TableDescriber {
         return comment;
     }
 
+    public ImmutableList<String> getPrimaryKeys() {
+        return primaryKeys;
+    }
 }

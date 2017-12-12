@@ -1,16 +1,21 @@
 package moe.yamato.autojcode.utils;
 
-import com.google.common.base.Strings;
+import com.google.common.collect.ImmutableList;
 import com.google.common.collect.ImmutableMap;
 import com.google.common.collect.Sets;
 import moe.yamato.autojcode.domain.Property;
 import moe.yamato.autojcode.domain.TableDescriber;
+import net.sf.jsqlparser.JSQLParserException;
+import net.sf.jsqlparser.parser.CCJSqlParserUtil;
+import net.sf.jsqlparser.statement.create.table.CreateTable;
+import net.sf.jsqlparser.statement.create.table.Index;
 
-import java.util.Arrays;
+import java.util.List;
 import java.util.Optional;
 import java.util.Set;
 import java.util.regex.Matcher;
 import java.util.regex.Pattern;
+import java.util.stream.Collectors;
 
 /**
  * Package: moe.yamato.autojcode
@@ -29,17 +34,29 @@ public abstract class SqlUtils {
     public static TableDescriber getTableDescriber(String ddl) {
         String tableName = "";
         String tableComment = "";
+        ImmutableList<String> primaryKeys = ImmutableList.of();
 
-        final Matcher matcher = TABLE_COMMENT_PATTERN.matcher(ddl);
+        try {
+            CreateTable createTable = (CreateTable) CCJSqlParserUtil.parse(ddl);
+            tableName = createTable.getTable().getName().replaceAll("`", "");
 
-        if (matcher.find()) {
-            tableName = matcher.group(1);
-            tableComment = matcher.group(2);
+            final int idx = createTable.getTableOptionsStrings().indexOf("COMMENT");
+            if (idx != -1) {
+                tableComment = (String) createTable.getTableOptionsStrings().get(idx + 2);
+            }
+
+            primaryKeys = ImmutableList.copyOf(createTable.getIndexes().stream()
+                    .filter(index -> index.getType().equals("PRIMARY KEY"))
+                    .map(Index::getColumnsNames)
+                    .flatMap(List::stream)
+                    .collect(Collectors.toList()));
+        } catch (JSQLParserException e) {
+            e.printStackTrace();
         }
 
         return new TableDescriber(
                 Optional.ofNullable(tableName).orElse("default_table_name"),
-                Optional.ofNullable(tableComment).orElse(""));
+                Optional.ofNullable(tableComment).orElse(""), primaryKeys);
     }
 
     public static Set<Property> getProperties(String ddl) {
