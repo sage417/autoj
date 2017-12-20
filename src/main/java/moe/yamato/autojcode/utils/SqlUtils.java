@@ -49,6 +49,7 @@ public abstract class SqlUtils {
                     .filter(index -> index.getType().equals("PRIMARY KEY"))
                     .map(Index::getColumnsNames)
                     .flatMap(List::stream)
+                    .map(pk->pk.replaceAll("`", ""))
                     .collect(Collectors.toList()));
         } catch (JSQLParserException e) {
             e.printStackTrace();
