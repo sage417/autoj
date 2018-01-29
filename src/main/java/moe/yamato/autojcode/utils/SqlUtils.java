@@ -78,6 +78,7 @@ public abstract class SqlUtils {
                     .put("mediumint", "Integer")
                     .put("int", "Integer")
                     .put("integer", "Integer")
+                    .put("bigint", "Long")
                     .put("float", "BigDecimal")
                     .put("float precision", "BigDecimal")
                     .put("double", "BigDecimal")

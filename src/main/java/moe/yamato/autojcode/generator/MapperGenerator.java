@@ -56,14 +56,18 @@ public class MapperGenerator {
 
     public static void main(String[] args) throws IOException, TemplateException {
 
-        String sql = "CREATE TABLE `t_candidate_wx_biz` (" +
-                "  `candidateId` int(11) NOT NULL DEFAULT '0' COMMENT '应聘信息Id'," +
-                "  `studentId` int(11) NOT NULL DEFAULT '0' COMMENT '学员id'," +
-                "  `companyId` int(11) NOT NULL DEFAULT '0' COMMENT '公司id'," +
-                "  `ctime` datetime NOT NULL DEFAULT CURRENT_TIMESTAMP COMMENT '创建时间'," +
-                "  `mtime` datetime NOT NULL DEFAULT CURRENT_TIMESTAMP ON UPDATE CURRENT_TIMESTAMP COMMENT '最后修改时间'," +
-                "  PRIMARY KEY (`candidateId`)" +
-                ") ENGINE=InnoDB DEFAULT CHARSET=utf8mb4;";
+        String sql =  "CREATE TABLE `t_plan_attendance_time` (\n" +
+                "  `id` int(11) unsigned NOT NULL AUTO_INCREMENT COMMENT '主键id',\n" +
+                "  `planId` int(11) unsigned NOT NULL DEFAULT '0' COMMENT '外键-实施计划id',\n" +
+                "  `beginTime` datetime NOT NULL DEFAULT CURRENT_TIMESTAMP COMMENT '签到开始时间',\n" +
+                "  `endTime` datetime NOT NULL DEFAULT CURRENT_TIMESTAMP COMMENT '签到结束时间',\n" +
+                "  `ctime` datetime NOT NULL DEFAULT CURRENT_TIMESTAMP COMMENT '创建时间',\n" +
+                "  `mtime` datetime NOT NULL DEFAULT CURRENT_TIMESTAMP COMMENT '修改时间',\n" +
+                "  `cuser` bigint(20) unsigned NOT NULL DEFAULT '0' COMMENT '创建人',\n" +
+                "  `muser` bigint(20) unsigned NOT NULL DEFAULT '0' COMMENT '修改人',\n" +
+                "  `status` tinyint(4) unsigned NOT NULL DEFAULT '0' COMMENT '状态(0为已删除,1为可用)',\n" +
+                "  PRIMARY KEY (`id`)\n" +
+                ") ENGINE=InnoDB DEFAULT CHARSET=utf8mb4 ROW_FORMAT=COMPACT COMMENT='签到计划表'";
 
         final Set<Property> columns = SqlUtils.getProperties(sql);
 

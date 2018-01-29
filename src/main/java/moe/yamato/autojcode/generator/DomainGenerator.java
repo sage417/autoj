@@ -54,20 +54,20 @@ public class DomainGenerator {
 
     public static void main(String[] args) throws IOException, TemplateException {
 
-        String sql = "CREATE TABLE `t_candidate_recruit` (\n" +
-                "  `candidateId` int(11) NOT NULL DEFAULT '0' COMMENT '应聘者id',\n" +
-                "  `channelType` tinyint(4) NOT NULL DEFAULT '0' COMMENT '渠道类型：校招1、社招2、特批3',\n" +
-                "  `channelId` int(11) NOT NULL DEFAULT '0' COMMENT '招聘渠道id',\n" +
-                "  `inviteLjCode` int(11) NOT NULL DEFAULT '0' COMMENT '邀约人系统号',\n" +
-                "  `resumeLjCode` int(11) NOT NULL DEFAULT '0' COMMENT '简历人系统号',\n" +
-                "  `restorationApply` varchar(100) NOT NULL DEFAULT '' COMMENT '复职申请单：图片地址',\n" +
-                "  `qualificationInquiry` varchar(100) NOT NULL DEFAULT '' COMMENT '资格查询截图：图片地址',\n" +
+        String sql = "CREATE TABLE `t_plan_attendance_time` (\n" +
+                "  `id` int(11) unsigned NOT NULL AUTO_INCREMENT COMMENT '主键id',\n" +
+                "  `planId` int(11) unsigned NOT NULL DEFAULT '0' COMMENT '外键-实施计划id',\n" +
+                "  `beginTime` datetime NOT NULL DEFAULT CURRENT_TIMESTAMP COMMENT '签到开始时间',\n" +
+                "  `endTime` datetime NOT NULL DEFAULT CURRENT_TIMESTAMP COMMENT '签到结束时间',\n" +
                 "  `ctime` datetime NOT NULL DEFAULT CURRENT_TIMESTAMP COMMENT '创建时间',\n" +
-                "  `mtime` datetime NOT NULL DEFAULT CURRENT_TIMESTAMP ON UPDATE CURRENT_TIMESTAMP COMMENT '更新时间',\n" +
-                "  PRIMARY KEY (`candidateId`)\n" +
-                ") ENGINE=InnoDB DEFAULT CHARSET=utf8mb4 COMMENT='应聘详情信息';";
+                "  `mtime` datetime NOT NULL DEFAULT CURRENT_TIMESTAMP COMMENT '修改时间',\n" +
+                "  `cuser` bigint(20) unsigned NOT NULL DEFAULT '0' COMMENT '创建人',\n" +
+                "  `muser` bigint(20) unsigned NOT NULL DEFAULT '0' COMMENT '修改人',\n" +
+                "  `status` tinyint(4) unsigned NOT NULL DEFAULT '0' COMMENT '状态(0为已删除,1为可用)',\n" +
+                "  PRIMARY KEY (`id`)\n" +
+                ") ENGINE=InnoDB DEFAULT CHARSET=utf8mb4 ROW_FORMAT=COMPACT COMMENT='签到计划表'";
 
-        generateDomain(sql, "t_", "", ".");
+        generateDomain(sql, "t_", "com.lianjia.confucius.stanford.entity", ".");
 
     }
 }

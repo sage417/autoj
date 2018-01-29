@@ -2,25 +2,56 @@
 <!DOCTYPE mapper PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN" "http://mybatis.org/dtd/mybatis-3-mapper.dtd">
 <mapper namespace="${namespace}">
 
+    <select id="selectById" resultType="${resultType}">
+        SELECT
+    <#list columns?chunk(3) as rows>
+        <#list rows as columnName>`${columnName}`<#sep>, </#sep></#list><#sep>,</#sep>
+    </#list>
+        FROM `${tableName}`
+        WHERE `${pk}` = ${r"#{"}${pk}}
+    </select>
+
+
+    <select id="selectWithId" resultType="${resultType}">
+        SELECT
+    <#list columns?chunk(3) as rows>
+        <#list rows as columnName>`${columnName}`<#sep>, </#sep></#list><#sep>,</#sep>
+    </#list>
+        FROM `${tableName}`
+        WHERE `${pk}` = ${r"#{"}${pk}}
+    <#list insertColumns as columnName>
+        <if test="columns.contains('${columnName}')">AND `${columnName}` = ${"#\{"}${columnName}}</if>
+    </#list>
+    </select>
+
+
     <insert id="insert" keyProperty="${pk}">
         INSERT INTO `${tableName}`
         (<#list insertColumns as columnName>`${columnName}`<#sep>, </#sep></#list>)
         VALUES
         (
         <#list insertColumns?chunk(3) as rows>
-            <#list rows as columnName>#${"\{" + columnName}}<#sep>, </#sep></#list><#sep>,</#sep>
+            <#list rows as columnName>#${"\{" + columnName}}<#sep>, </#sep></#list>
         </#list>
         )
     </insert>
-
-    <select id="selectById" resultType="${resultType}">
-        SELECT
-        <#list columns?chunk(3) as rows>
-            <#list rows as columnName>`${columnName}`<#sep>, </#sep></#list><#sep>,</#sep>
+    
+    <insert id="insertDynamic" keyProperty="${pk}">
+        INSERT INTO `${tableName}`
+        <trim prefix="(" suffix=")" suffixOverrides=",">
+        <#list insertColumns as columnName>
+            <if test="${columnName} != null">`${columnName}`<#sep>,</#sep></if>
         </#list>
-        FROM `${tableName}`
-        WHERE `${pk}` = ${r"#{"}${pk}}
-    </select>
+        </trim>
+        VALUES
+        <trim prefix="(" suffix=")" suffixOverrides=",">
+        <#list insertColumns?chunk(3) as rows>
+        <#list rows as columnName>
+            <if test="${columnName} != null">#${"\{" + columnName}}<#sep>,</#sep></if>
+        </#list>
+        </#list>
+        </trim>
+    </insert>
 
     <update id="update">
         UPDATE `${tableName}`
