@@ -31,7 +31,7 @@
         VALUES
         (
         <#list insertColumns?chunk(3) as rows>
-            <#list rows as columnName>#${"\{" + columnName}}<#sep>, </#sep></#list>
+            <#list rows as columnName>#${"\{" + columnName}}<#sep>, </#sep></#list><#sep>, </#sep>
         </#list>
         )
     </insert>
@@ -45,10 +45,8 @@
         </trim>
         VALUES
         <trim prefix="(" suffix=")" suffixOverrides=",">
-        <#list insertColumns?chunk(3) as rows>
-        <#list rows as columnName>
+        <#list insertColumns as columnName>
             <if test="${columnName} != null">#${"\{" + columnName}}<#sep>,</#sep></if>
-        </#list>
         </#list>
         </trim>
     </insert>
