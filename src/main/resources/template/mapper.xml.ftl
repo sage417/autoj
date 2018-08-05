@@ -35,6 +35,18 @@
         </#list>
         )
     </insert>
+
+    <insert id="batchInsert" keyProperty="${pk}">
+        INSERT INTO `${tableName}`
+        (<#list insertColumns as columnName>`${columnName}`<#sep>, </#sep></#list>)
+        VALUES
+        (
+        <foreach collection="list" item="item">
+        (<#list insertColumns?chunk(3) as rows>
+        <#list rows as columnName>#${"\{item." + columnName}}<#sep>, </#sep></#list><#sep>, </#sep> </#list>)
+        </foreach>
+        )
+    </insert>
     
     <insert id="insertDynamic" keyProperty="${pk}">
         INSERT INTO `${tableName}`
