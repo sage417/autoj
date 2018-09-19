@@ -10,23 +10,23 @@ public class ${className} implements Serializable {
 
 <#list attrs as attr>
 	/**
-	 * ${attr.comment}
+	 * ${attr.comment!}
 	 */
 	private ${attr.type} ${attr.name};
 
 </#list>
 <#list attrs as attr>
 	/**
-	 * 获取 ${attr.comment}
-	 * @return ${attr.comment}
+	 * 获取 ${attr.comment!}
+	 * @return ${attr.comment!}
 	 */
 	public ${attr.type} get${attr.name?cap_first}() {
 		 return ${attr.name};
 	}
 
 	/**
-	 * 设置 ${attr.comment}
-	 * @param ${attr.name} ${attr.comment}
+	 * 设置 ${attr.comment!}
+	 * @param ${attr.name} ${attr.comment!}
 	 */
 	public void set${attr.name?cap_first}(${attr.type} ${attr.name}) {
 		 this.${attr.name} = ${attr.name};

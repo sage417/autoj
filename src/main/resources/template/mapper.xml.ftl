@@ -27,7 +27,11 @@
 
     <insert id="insert" keyProperty="${pk}">
         INSERT INTO `${tableName}`
-        (<#list insertColumns as columnName>`${columnName}`<#sep>, </#sep></#list>)
+        (
+        <#list insertColumns?chunk(3) as rows>
+            <#list rows as columnName>`${columnName}`<#sep>, </#sep></#list><#sep>, </#sep>
+        </#list>
+        )
         VALUES
         (
         <#list insertColumns?chunk(3) as rows>
